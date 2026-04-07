@@ -6,7 +6,7 @@ A real-time market microstructure analysis engine that decomposes bid-ask spread
 
 ## What this does
 
-Every time you trade, the market maker on the other side charges you a spread. That spread isn't arbitrary — it's compensation for three distinct economic costs:
+Every time you trade, the market maker on the other side charges you a spread. That spread isn't arbitrary; rather, it's compensation for three distinct economic costs:
 
 ```
 Effective Spread = Adverse Selection + Inventory Cost + Order Processing
@@ -18,14 +18,14 @@ This engine estimates each component in real time:
 - **Inventory cost** — the risk premium for holding an undesired position until it can be offloaded.
 - **Order processing** — fixed operational costs (technology, clearing, etc.). The residual after the other two are estimated.
 
-When adverse selection share is elevated, you are likely trading in a toxic flow environment — informed participants are dominant, spreads are wide, and price impact will be high. When adverse selection share is low and spreads are tight, the market is deep and liquid.
+When the adverse selection share is elevated, you are likely trading in a toxic flow environment, informed participants are dominant, spreads are wide, and price impact will be high. When the adverse selection share is low and spreads are tight, the market is deep and liquid.
 
 ---
 
 ## Models implemented
 
 ### Roll (1984)
-Estimates the effective spread from the negative serial covariance of transaction price changes. Requires no quote data — works purely from trade prices.
+Estimates the effective spread from the negative serial covariance of transaction price changes. Requires no quote data since it works purely from trade prices.
 
 ```
 S = 2 * sqrt(-Cov(ΔP_t, ΔP_{t-1}))
@@ -51,13 +51,13 @@ Where `d_t ∈ {-1, +1}` is the trade initiator direction (buyer or seller). The
 ---
 
 ### Kyle (1985) — Lambda
-Estimates price impact via OLS regression of price changes on signed order flow (volume × direction). The slope coefficient λ measures how much the price moves per unit of signed volume — a direct measure of market depth.
+Estimates price impact via OLS regression of price changes on signed order flow (volume × direction). The slope coefficient λ measures how much the price moves per unit of signed volume, which is a direct measure of market depth.
 
 ```
 ΔP_t = λ * (Q_t * d_t) + ε_t
 ```
 
-Higher λ means the market is thinner — each unit of aggressive flow moves the price more. Lower λ means deep, liquid conditions.
+Higher λ means the market is thinner; each unit of aggressive flow moves the price more. Lower λ means deep, liquid conditions.
 
 **Reference**: Kyle, A. S. (1985). Continuous Auctions and Insider Trading. *Econometrica*, 53(6), 1315–1335.
 
